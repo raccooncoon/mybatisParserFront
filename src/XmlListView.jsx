@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Container from '@mui/material/Container';
-import {TextField} from "@mui/material";
+import {TextField, Typography} from "@mui/material";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -24,6 +24,8 @@ const XmlListView = () => {
 
     const defaultPageInfo = { pageSize: 20, pageNumber: 0, last: false, totalElements: 0 };
 
+    const URL = `http://192.168.103.34:8080/mapperBody/${searchTerm}`;
+
     useEffect(() => {
         fetchData();
     }, [searchTerm, mapperTypes]); // Re-fetch data when searchTerm changes
@@ -34,7 +36,7 @@ const XmlListView = () => {
         console.log(pageInfo);
         try {
             if(searchTerm.length > 1) {
-                const response = await axios.get(`http://localhost:8080/mapperBody/${searchTerm}`, {
+                const response = await axios.get(URL, {
                     params: {
                         page: pageInfo.pageNumber,
                         size: pageInfo.pageSize,
@@ -63,6 +65,8 @@ const XmlListView = () => {
 
     const handleChange = (event) => {
         const {id, checked} = event.target;
+        // console.log(id);
+        // console.log(checked);
 
         setMapperTypes((prevTypes) => {
             if (checked) {
@@ -75,13 +79,14 @@ const XmlListView = () => {
         // 페이징 초기값 업데이트
         setPageInfo(defaultPageInfo);
         setData([]);
-    };
+
+    }
 
     const fetchMoreData = async () => {
         // 페이징 정보 업데이트
         try {
             if (!pageInfo.last) {
-                const response = await axios.get(`http://localhost:8080/mapperBody/${searchTerm}`, {
+                const response = await axios.get(URL, {
                     params: {
                         page: pageInfo.pageNumber + 1, // Increment the page number
                         size: pageInfo.pageSize,
@@ -107,7 +112,7 @@ const XmlListView = () => {
     return (
         <Container fixed style={{ height: '100vh'}}>
             <Grid container spacing={2} justifyContent={"space-between"}>
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                     <FormControlLabel
                         label="C"
                         control={<Checkbox id="insert" defaultChecked color="secondary" onChange={handleChange}/>}
@@ -126,7 +131,7 @@ const XmlListView = () => {
                     />
                     <Chip label={pageInfo.totalElements}  />
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={12} md={4}>
                     <TextField
                         id="searchField"
                         label="테이블 이름 입력"
@@ -140,19 +145,19 @@ const XmlListView = () => {
                 dataLength={data.length} // 현재 표시된 아이템 수
                 next={fetchMoreData} // 스크롤이 바닥에 닿을 때 호출되는 함수
                 hasMore={!pageInfo.last} // 더 많은 아이템이 있는지 여부
-                //loader={<Typography>...</Typography>} // 로딩 중에 보여질 컴포넌트
+                loader={<Typography></Typography>} // 로딩 중에 보여질 컴포넌트
             >
             <TableContainer component={Paper}>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>No</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>No</TableCell>
                             {/*<TableCell>ID</TableCell>*/}
                             <TableCell>SERVICE_NAME</TableCell>
-                            <TableCell>MAPPER_TYPE</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>MAPPER_TYPE</TableCell>
                             <TableCell>MAPPER_ID</TableCell>
                             <TableCell>MAPPER_NAME</TableCell>
-                            <TableCell>FILE_NAME</TableCell>
+                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>FILE_NAME</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -161,15 +166,15 @@ const XmlListView = () => {
                                 key={row.id}
                                 sx={{'&:last-child td, &:last-child th': {border: 0}}}
                             >
-                                <TableCell component="th" scope="row">
+                                <TableCell component="th" scope="row" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                                     {index + 1}
                                 </TableCell>
                                 {/*<TableCell>{row.id}</TableCell>*/}
                                 <TableCell>{row.serviceName}</TableCell>
-                                <TableCell>{row.mapperType}</TableCell>
+                                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{row.mapperType}</TableCell>
                                 <TableCell>{row.mapperId}</TableCell>
                                 <TableCell>{row.mapperName}</TableCell>
-                                <TableCell>{row.fileName}</TableCell>
+                                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }} >{row.fileName}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

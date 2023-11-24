@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Container from '@mui/material/Container';
-import {TextField, Typography} from "@mui/material";
+import {Box, Modal, TextField, Typography} from "@mui/material";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -14,33 +14,48 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Chip from '@mui/material/Chip';
-
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {a11yDark} from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const XmlListView = () => {
     const [data, setData] = useState([]);
     const [pageInfo, setPageInfo] = useState({last: false, pageSize: 20, pageNumber: 0, totalElements: 0});
     const [searchTerm, setSearchTerm] = useState('');
     const [mapperTypes, setMapperTypes] = useState(['update', 'delete', 'insert']);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const defaultPageInfo = { pageSize: 20, pageNumber: 0, last: false, totalElements: 0 };
+    const handleOpenModal = (row) => {
+        console.log("row");
+        console.log(row);
+        setSelectedRow(row);
+        setIsModalOpen(true);
+    };
 
-    const URL = `http://192.168.103.34:8080/mapperBody/${searchTerm}`;
+    const handleCloseModal = () => {
+        setSelectedRow(null);
+        setIsModalOpen(false);
+    };
+
+
+    const defaultPageInfo = {pageSize: 20, pageNumber: 0, last: false, totalElements: 0};
+
+    const URL = `https://b16b-220-72-222-210.ngrok-free.app/mapperBody/${searchTerm}`;
 
     useEffect(() => {
         fetchData();
     }, [searchTerm, mapperTypes]); // Re-fetch data when searchTerm changes
 
     const fetchData = async () => {
-        console.log(">>>>>>>>>>>>>>.");
-        console.log(mapperTypes);
-        console.log(pageInfo);
+        // console.log(">>>>>>>>>>>>>>.");
+        // console.log(mapperTypes);
+        // console.log(pageInfo);
+        // console.log(selectedRow);
         try {
-            if(searchTerm.length > 1) {
+            if (searchTerm.length > 1) {
                 const response = await axios.get(URL, {
                     params: {
-                        page: pageInfo.pageNumber,
-                        size: pageInfo.pageSize,
-                        mapperTypes: mapperTypes.toString(),
+                        page: pageInfo.pageNumber, size: pageInfo.pageSize, mapperTypes: mapperTypes.toString(),
                     },
                 });
                 setData(response.data.content);
@@ -89,8 +104,7 @@ const XmlListView = () => {
                 const response = await axios.get(URL, {
                     params: {
                         page: pageInfo.pageNumber + 1, // Increment the page number
-                        size: pageInfo.pageSize,
-                        mapperTypes: mapperTypes.toString(),
+                        size: pageInfo.pageSize, mapperTypes: mapperTypes.toString(),
                     },
                 });
 
@@ -109,8 +123,8 @@ const XmlListView = () => {
     }
 
 
-    return (
-        <Container fixed style={{ height: '100vh'}}>
+
+    return (<Container fixed style={{height: '100vh'}}>
             <Grid container spacing={2} justifyContent={"space-between"}>
                 <Grid item xs={12} md={4}>
                     <FormControlLabel
@@ -129,12 +143,12 @@ const XmlListView = () => {
                         label="D"
                         control={<Checkbox id="delete" defaultChecked color="success" onChange={handleChange}/>}
                     />
-                    <Chip label={pageInfo.totalElements}  />
+                    <Chip label={pageInfo.totalElements}/>
                 </Grid>
                 <Grid item xs={12} md={4}>
                     <TextField
                         id="searchField"
-                        label="테이블 이름 입력"
+                        label="검색"
                         type="search"
                         variant="standard"
                         fullWidth
@@ -147,42 +161,70 @@ const XmlListView = () => {
                 hasMore={!pageInfo.last} // 더 많은 아이템이 있는지 여부
                 loader={<Typography></Typography>} // 로딩 중에 보여질 컴포넌트
             >
-            <TableContainer component={Paper}>
-                <Table aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>No</TableCell>
-                            {/*<TableCell>ID</TableCell>*/}
-                            <TableCell>SERVICE_NAME</TableCell>
-                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>MAPPER_TYPE</TableCell>
-                            <TableCell>MAPPER_ID</TableCell>
-                            <TableCell>MAPPER_NAME</TableCell>
-                            <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>FILE_NAME</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {data.map((row,index) => (
-                            <TableRow
-                                key={row.id}
-                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                            >
-                                <TableCell component="th" scope="row" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                                    {index + 1}
-                                </TableCell>
-                                {/*<TableCell>{row.id}</TableCell>*/}
-                                <TableCell>{row.serviceName}</TableCell>
-                                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{row.mapperType}</TableCell>
-                                <TableCell>{row.mapperId}</TableCell>
-                                <TableCell>{row.mapperName}</TableCell>
-                                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }} >{row.fileName}</TableCell>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>No</TableCell>
+                                {/*<TableCell>ID</TableCell>*/}
+                                <TableCell>SERVICE_NAME</TableCell>
+                                <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>MAPPER_TYPE</TableCell>
+                                <TableCell>MAPPER_ID</TableCell>
+                                <TableCell>MAPPER_NAME</TableCell>
+                                <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>FILE_NAME</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-          </InfiniteScroll>
-        </Container>
-    )
+                        </TableHead>
+                        <TableBody>
+                            {data.map((row, index) => (<TableRow
+                                    onClick={() => handleOpenModal(row)}
+                                    key={row.id}
+                                    sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                >
+                                    <TableCell component="th" scope="row"
+                                               sx={{display: {xs: 'none', sm: 'table-cell'}}}>
+                                        {index + 1}
+                                    </TableCell>
+                                    {/*<TableCell>{row.id}</TableCell>*/}
+                                    <TableCell>{row.serviceName}</TableCell>
+                                    <TableCell
+                                        sx={{display: {xs: 'none', sm: 'table-cell'}}}>{row.mapperType}</TableCell>
+                                    <TableCell>{row.mapperId}</TableCell>
+                                    <TableCell>{row.mapperName}</TableCell>
+                                    <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>{row.fileName}</TableCell>
+                                </TableRow>))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </InfiniteScroll>
+            <Modal
+                open={isModalOpen}
+                onClose={handleCloseModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '90%', // 90%로 크기 조절
+                        maxHeight: '90vh', // 최대 높이를 화면 높이의 90%로 설정
+                        overflowY: 'auto', // 내용이 모달보다 클 경우 스크롤 생성
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        p: 2,
+                    }}
+                >
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        {selectedRow && selectedRow.mapperNameSpace}
+                    </Typography>
+                    <SyntaxHighlighter language="xml" style={a11yDark}>
+                        {selectedRow && selectedRow.mapperBody}
+                    </SyntaxHighlighter>
+                </Box>
+            </Modal>
+        </Container>)
 };
 
 export default XmlListView;

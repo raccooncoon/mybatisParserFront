@@ -24,6 +24,7 @@ const XmlListView = () => {
     const [mapperTypes, setMapperTypes] = useState(['update', 'delete', 'insert']);
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [endPoint, setEndPoint] = useState('http://localhost:8080');
 
     const handleOpenModal = (row) => {
         console.log("row");
@@ -40,7 +41,7 @@ const XmlListView = () => {
 
     const defaultPageInfo = {pageSize: 20, pageNumber: 0, last: false, totalElements: 0};
 
-    const URL = `https://b16b-220-72-222-210.ngrok-free.app/mapperBody/${searchTerm}`;
+    const URL = `${endPoint}/mapperBody/${searchTerm}`;
 
     useEffect(() => {
         fetchData();
@@ -51,6 +52,7 @@ const XmlListView = () => {
         // console.log(mapperTypes);
         // console.log(pageInfo);
         // console.log(selectedRow);
+        // console.log(URL);
         try {
             if (searchTerm.length > 1) {
                 const response = await axios.get(URL, {
@@ -76,6 +78,10 @@ const XmlListView = () => {
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
+    };
+
+    const handleEndPoint = (event) => {
+        setEndPoint(event.target.value);
     };
 
     const handleChange = (event) => {
@@ -123,108 +129,118 @@ const XmlListView = () => {
     }
 
 
-
     return (<Container fixed style={{height: '100vh'}}>
-            <Grid container spacing={2} justifyContent={"space-between"}>
-                <Grid item xs={12} md={4}>
-                    <FormControlLabel
-                        label="C"
-                        control={<Checkbox id="insert" defaultChecked color="secondary" onChange={handleChange}/>}
-                    />
-                    <FormControlLabel
-                        label="R"
-                        control={<Checkbox id="select" color="default" onChange={handleChange}/>}
-                    />
-                    <FormControlLabel
-                        label="U"
-                        control={<Checkbox id="update" defaultChecked onChange={handleChange}/>}
-                    />
-                    <FormControlLabel
-                        label="D"
-                        control={<Checkbox id="delete" defaultChecked color="success" onChange={handleChange}/>}
-                    />
-                    <Chip label={pageInfo.totalElements}/>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <TextField
-                        id="searchField"
-                        label="검색"
-                        type="search"
-                        variant="standard"
-                        fullWidth
-                        onChange={handleSearch}/>
-                </Grid>
+        <Grid container spacing={2} justifyContent={"space-between"}>
+            <Grid item xs={12} md={4}>
+                <FormControlLabel
+                    label="C"
+                    control={<Checkbox id="insert" defaultChecked color="secondary" onChange={handleChange}/>}
+                />
+                <FormControlLabel
+                    label="R"
+                    control={<Checkbox id="select" color="default" onChange={handleChange}/>}
+                />
+                <FormControlLabel
+                    label="U"
+                    control={<Checkbox id="update" defaultChecked onChange={handleChange}/>}
+                />
+                <FormControlLabel
+                    label="D"
+                    control={<Checkbox id="delete" defaultChecked color="success" onChange={handleChange}/>}
+                />
+                <Chip label={pageInfo.totalElements}/>
             </Grid>
-            <InfiniteScroll
-                dataLength={data.length} // 현재 표시된 아이템 수
-                next={fetchMoreData} // 스크롤이 바닥에 닿을 때 호출되는 함수
-                hasMore={!pageInfo.last} // 더 많은 아이템이 있는지 여부
-                loader={<Typography></Typography>} // 로딩 중에 보여질 컴포넌트
+            <Grid item xs={12} md={4}>
+                <TextField
+                    id="searchField"
+                    label="검색"
+                    type="search"
+                    variant="standard"
+                    fullWidth
+                    onChange={handleSearch}/>
+            </Grid>
+        </Grid>
+        <Grid container spacing={2} justifyContent={"center"}>
+            <Grid item xs={12} md={12}>
+                <TextField
+                    id="endPointField"
+                    label="END_POINT"
+                    type="field"
+                    variant="standard"
+                    fullWidth
+                    onChange={handleEndPoint}/>
+            </Grid>
+        </Grid>
+        <InfiniteScroll
+            dataLength={data.length} // 현재 표시된 아이템 수
+            next={fetchMoreData} // 스크롤이 바닥에 닿을 때 호출되는 함수
+            hasMore={!pageInfo.last} // 더 많은 아이템이 있는지 여부
+            loader={<Typography></Typography>} // 로딩 중에 보여질 컴포넌트
+        >
+            <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>No</TableCell>
+                            {/*<TableCell>ID</TableCell>*/}
+                            <TableCell>SERVICE_NAME</TableCell>
+                            <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>MAPPER_TYPE</TableCell>
+                            <TableCell>MAPPER_ID</TableCell>
+                            <TableCell>MAPPER_NAME</TableCell>
+                            <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>FILE_NAME</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.map((row, index) => (<TableRow
+                            onClick={() => handleOpenModal(row)}
+                            key={row.id}
+                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                        >
+                            <TableCell component="th" scope="row"
+                                       sx={{display: {xs: 'none', sm: 'table-cell'}}}>
+                                {index + 1}
+                            </TableCell>
+                            {/*<TableCell>{row.id}</TableCell>*/}
+                            <TableCell>{row.serviceName}</TableCell>
+                            <TableCell
+                                sx={{display: {xs: 'none', sm: 'table-cell'}}}>{row.mapperType}</TableCell>
+                            <TableCell>{row.mapperId}</TableCell>
+                            <TableCell>{row.mapperName}</TableCell>
+                            <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>{row.fileName}</TableCell>
+                        </TableRow>))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </InfiniteScroll>
+        <Modal
+            open={isModalOpen}
+            onClose={handleCloseModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '90%', // 90%로 크기 조절
+                    maxHeight: '90vh', // 최대 높이를 화면 높이의 90%로 설정
+                    overflowY: 'auto', // 내용이 모달보다 클 경우 스크롤 생성
+                    bgcolor: 'background.paper',
+                    border: '2px solid #000',
+                    p: 2,
+                }}
             >
-                <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>No</TableCell>
-                                {/*<TableCell>ID</TableCell>*/}
-                                <TableCell>SERVICE_NAME</TableCell>
-                                <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>MAPPER_TYPE</TableCell>
-                                <TableCell>MAPPER_ID</TableCell>
-                                <TableCell>MAPPER_NAME</TableCell>
-                                <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>FILE_NAME</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {data.map((row, index) => (<TableRow
-                                    onClick={() => handleOpenModal(row)}
-                                    key={row.id}
-                                    sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                                >
-                                    <TableCell component="th" scope="row"
-                                               sx={{display: {xs: 'none', sm: 'table-cell'}}}>
-                                        {index + 1}
-                                    </TableCell>
-                                    {/*<TableCell>{row.id}</TableCell>*/}
-                                    <TableCell>{row.serviceName}</TableCell>
-                                    <TableCell
-                                        sx={{display: {xs: 'none', sm: 'table-cell'}}}>{row.mapperType}</TableCell>
-                                    <TableCell>{row.mapperId}</TableCell>
-                                    <TableCell>{row.mapperName}</TableCell>
-                                    <TableCell sx={{display: {xs: 'none', sm: 'table-cell'}}}>{row.fileName}</TableCell>
-                                </TableRow>))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </InfiniteScroll>
-            <Modal
-                open={isModalOpen}
-                onClose={handleCloseModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '90%', // 90%로 크기 조절
-                        maxHeight: '90vh', // 최대 높이를 화면 높이의 90%로 설정
-                        overflowY: 'auto', // 내용이 모달보다 클 경우 스크롤 생성
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        p: 2,
-                    }}
-                >
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        {selectedRow && selectedRow.mapperNameSpace}
-                    </Typography>
-                    <SyntaxHighlighter language="xml" style={a11yDark}>
-                        {selectedRow && selectedRow.mapperBody}
-                    </SyntaxHighlighter>
-                </Box>
-            </Modal>
-        </Container>)
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    {selectedRow && selectedRow.mapperNameSpace}
+                </Typography>
+                <SyntaxHighlighter language="xml" style={a11yDark}>
+                    {selectedRow && selectedRow.mapperBody}
+                </SyntaxHighlighter>
+            </Box>
+        </Modal>
+    </Container>)
 };
 
 export default XmlListView;

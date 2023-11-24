@@ -16,6 +16,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Chip from '@mui/material/Chip';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import {a11yDark} from 'react-syntax-highlighter/dist/esm/styles/prism';
+import {useLocation} from 'react-router-dom';
 
 const XmlListView = () => {
     const [data, setData] = useState([]);
@@ -24,11 +25,14 @@ const XmlListView = () => {
     const [mapperTypes, setMapperTypes] = useState(['update', 'delete', 'insert']);
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [endPoint, setEndPoint] = useState('http://localhost:8080');
 
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const endPoint = searchParams.get('endPoint');
+
+    const END_POINT_URL = endPoint ? `${endPoint}/mapperBody/${searchTerm}` : `http://localhost:8080/mapperBody/${searchTerm}`;
+    console.log(endPoint);
     const handleOpenModal = (row) => {
-        console.log("row");
-        console.log(row);
         setSelectedRow(row);
         setIsModalOpen(true);
     };
@@ -40,8 +44,6 @@ const XmlListView = () => {
 
 
     const defaultPageInfo = {pageSize: 20, pageNumber: 0, last: false, totalElements: 0};
-
-    const URL = `${endPoint}/mapperBody/${searchTerm}`;
 
     useEffect(() => {
         fetchData();
@@ -55,7 +57,7 @@ const XmlListView = () => {
         // console.log(URL);
         try {
             if (searchTerm.length > 1) {
-                const response = await axios.get(URL, {
+                const response = await axios.get(END_POINT_URL, {
                     params: {
                         page: pageInfo.pageNumber, size: pageInfo.pageSize, mapperTypes: mapperTypes.toString(),
                     },
@@ -78,10 +80,6 @@ const XmlListView = () => {
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
-    };
-
-    const handleEndPoint = (event) => {
-        setEndPoint(event.target.value);
     };
 
     const handleChange = (event) => {
@@ -107,7 +105,7 @@ const XmlListView = () => {
         // 페이징 정보 업데이트
         try {
             if (!pageInfo.last) {
-                const response = await axios.get(URL, {
+                const response = await axios.get(END_POINT_URL, {
                     params: {
                         page: pageInfo.pageNumber + 1, // Increment the page number
                         size: pageInfo.pageSize, mapperTypes: mapperTypes.toString(),
@@ -158,17 +156,6 @@ const XmlListView = () => {
                     variant="standard"
                     fullWidth
                     onChange={handleSearch}/>
-            </Grid>
-        </Grid>
-        <Grid container spacing={2} justifyContent={"center"}>
-            <Grid item xs={12} md={12}>
-                <TextField
-                    id="endPointField"
-                    label="END_POINT"
-                    type="field"
-                    variant="standard"
-                    fullWidth
-                    onChange={handleEndPoint}/>
             </Grid>
         </Grid>
         <InfiniteScroll

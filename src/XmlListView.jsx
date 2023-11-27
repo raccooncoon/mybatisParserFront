@@ -26,13 +26,11 @@ const XmlListView = () => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const endPoint = searchParams.get('endPoint');
+    // const location = useLocation();
+    // const searchParams = new URLSearchParams(location.search);
+    // const endPoint = searchParams.get('endPoint');
 
-    // const END_POINT_URL = endPoint ? `${endPoint}/mapperBody/${searchTerm}` : `http://localhost:8080/mapperBody/${searchTerm}`;
     const END_POINT_URL = `/api/mapperBody/${searchTerm}`;
-    console.log(endPoint);
     const handleOpenModal = (row) => {
         setSelectedRow(row);
         setIsModalOpen(true);

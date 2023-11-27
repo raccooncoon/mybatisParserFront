@@ -127,7 +127,7 @@ const XmlListView = () => {
     }
 
 
-    return (<Container fixed style={{height: '100vh'}}>
+    return (<Container fixed style={{maxWidth: '1800px', height: '100vh'}}>
         <Grid container spacing={2} justifyContent={"space-between"}>
             <Grid item xs={12} md={4}>
                 <FormControlLabel

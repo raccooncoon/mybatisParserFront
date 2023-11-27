@@ -7,8 +7,8 @@ WORKDIR /usr/share/nginx/html
 # Copy the built React app into the image
 COPY build/ .
 
-# Expose port 3000
-EXPOSE 3000
+# Expose port 80
+EXPOSE 80
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

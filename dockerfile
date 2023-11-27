@@ -1,12 +1,14 @@
-# Dockerfile
-FROM node:14-alpine
+# Use a lightweight Nginx image
+FROM nginx:alpine
 
-WORKDIR /app
+# Set the working directory
+WORKDIR /usr/share/nginx/html
 
-COPY package*.json ./
+# Copy the built React app into the image
+COPY build/ .
 
-RUN npm install
+# Expose port 3000
+EXPOSE 3000
 
-COPY . .
-
-CMD ["npm", "start"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

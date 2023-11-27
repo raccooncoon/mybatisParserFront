@@ -80,6 +80,9 @@ const XmlListView = () => {
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
+
+        // 페이징 초기값 업데이트
+        setPageInfo(defaultPageInfo);
     };
 
     const handleChange = (event) => {
@@ -96,8 +99,8 @@ const XmlListView = () => {
         });
 
         // 페이징 초기값 업데이트
-        setPageInfo(defaultPageInfo);
         setData([]);
+        setPageInfo(defaultPageInfo);
 
     }
 

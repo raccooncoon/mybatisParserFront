@@ -217,13 +217,13 @@ const XmlListView = () => {
                 }}
             >
                 <Typography id="mapperType" variant="h6" component="h2">
-                    mapperType : {selectedRow &&  selectedRow.mapperType}
+                    {selectedRow &&  selectedRow.mapperType}
                 </Typography>
                 <Typography id="mapperId" variant="h6" component="h2">
-                    mapperId : {selectedRow &&  selectedRow.mapperId}
+                    {selectedRow &&  selectedRow.mapperId}
                 </Typography>
                 <Typography id="mapperNameSpace" variant="h6" component="h2">
-                    mapperNameSpace : {selectedRow &&  selectedRow.mapperNameSpace}
+                    {selectedRow &&  selectedRow.mapperNameSpace}
                 </Typography>
                 <SyntaxHighlighter language="sql" style={a11yDark}>
                     {selectedRow && selectedRow.mapperBody}

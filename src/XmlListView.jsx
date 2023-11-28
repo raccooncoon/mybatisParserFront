@@ -216,10 +216,16 @@ const XmlListView = () => {
                     p: 2,
                 }}
             >
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                    {selectedRow && selectedRow.mapperNameSpace}
+                <Typography id="mapperType" variant="h6" component="h2">
+                    mapperType : {selectedRow &&  selectedRow.mapperType}
                 </Typography>
-                <SyntaxHighlighter language="xml" style={a11yDark}>
+                <Typography id="mapperId" variant="h6" component="h2">
+                    mapperId : {selectedRow &&  selectedRow.mapperId}
+                </Typography>
+                <Typography id="mapperNameSpace" variant="h6" component="h2">
+                    mapperNameSpace : {selectedRow &&  selectedRow.mapperNameSpace}
+                </Typography>
+                <SyntaxHighlighter language="sql" style={a11yDark}>
                     {selectedRow && selectedRow.mapperBody}
                 </SyntaxHighlighter>
             </Box>

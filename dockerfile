@@ -7,7 +7,7 @@ WORKDIR /usr/share/nginx/html
 # Copy the built React app into the image
 COPY build/ .
 
-#COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80

@@ -16,7 +16,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Chip from '@mui/material/Chip';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import {a11yDark} from 'react-syntax-highlighter/dist/esm/styles/prism';
-import {useLocation} from 'react-router-dom';
 
 const XmlListView = () => {
     const [data, setData] = useState([]);
@@ -26,11 +25,7 @@ const XmlListView = () => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // const location = useLocation();
-    // const searchParams = new URLSearchParams(location.search);
-    // const endPoint = searchParams.get('endPoint');
-
-    const END_POINT_URL = `/api/mapperBody/${searchTerm}`;
+    const END_POINT_URL = `api/mapperBody/${searchTerm}`;
     const handleOpenModal = (row) => {
         setSelectedRow(row);
         setIsModalOpen(true);

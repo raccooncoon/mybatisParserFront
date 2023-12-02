@@ -243,7 +243,7 @@ const XmlListView = () => {
                     centered
                 >
                     <Tab label="XML 상세 보기"/>
-                    <Tab label="RUL 리스트 보기"/>
+                    <Tab label="URL 리스트 보기"/>
                 </Tabs>
                 {/* Tab 내용 */}
                 <TabPanel value={activeTab} index={0}>

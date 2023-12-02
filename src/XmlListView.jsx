@@ -37,7 +37,7 @@ const XmlListView = () => {
     const [activeTab, setActiveTab] = useState(0); // 현재 활성 탭
 
     const END_POINT_URL = `api/mapperBody/${searchTerm}`;
-    // const END_POINT_URL = `http://localhost:8080/api/mapperBody/${searchTerm}`;
+    // const END_POINT_URL = `http://localhost:8081/api/mapperBody/${searchTerm}`;
     const handleOpenModal = (row) => {
         console.log(row);
         setSelectedRow(row);

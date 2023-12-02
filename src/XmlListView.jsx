@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Container from '@mui/material/Container';
-import {Box, Modal, TextField, Typography} from "@mui/material";
+import {Box, Modal, Tab, Tabs, TextField, Typography} from "@mui/material";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,17 +16,30 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Chip from '@mui/material/Chip';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import {a11yDark} from 'react-syntax-highlighter/dist/esm/styles/prism';
+import * as PropTypes from "prop-types";
+import UrlListView from "./UrlListView";
 
+Tabs.propTypes = {
+    onChange: PropTypes.func,
+    centered: PropTypes.bool,
+    indicatorColor: PropTypes.string,
+    value: PropTypes.number,
+    textColor: PropTypes.string,
+    children: PropTypes.node
+};
 const XmlListView = () => {
     const [data, setData] = useState([]);
-    const [pageInfo, setPageInfo] = useState({last: false, pageSize: 20, pageNumber: 0, totalElements: 0});
+    const [pageInfo, setPageInfo] = useState({last: false, pageSize: 50, pageNumber: 0, totalElements: 0});
     const [searchTerm, setSearchTerm] = useState('');
     const [mapperTypes, setMapperTypes] = useState(['update', 'delete', 'insert']);
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState(0); // 현재 활성 탭
 
     const END_POINT_URL = `api/mapperBody/${searchTerm}`;
+    // const END_POINT_URL = `http://localhost:8080/api/mapperBody/${searchTerm}`;
     const handleOpenModal = (row) => {
+        console.log(row);
         setSelectedRow(row);
         setIsModalOpen(true);
     };
@@ -36,8 +49,12 @@ const XmlListView = () => {
         setIsModalOpen(false);
     };
 
+    // Tab을 변경할 때 호출되는 함수
+    const handleTabChange = (event, newValue) => {
+        setActiveTab(newValue);
+    };
 
-    const defaultPageInfo = {pageSize: 20, pageNumber: 0, last: false, totalElements: 0};
+    const defaultPageInfo = {pageSize: 50, pageNumber: 0, last: false, totalElements: 0};
 
     useEffect(() => {
         fetchData();
@@ -216,21 +233,61 @@ const XmlListView = () => {
                     p: 2,
                 }}
             >
-                <Typography id="mapperType" variant="h6" component="h2">
-                    {selectedRow &&  selectedRow.mapperType}
-                </Typography>
-                <Typography id="mapperId" variant="h6" component="h2">
-                    {selectedRow &&  selectedRow.mapperId}
-                </Typography>
-                <Typography id="mapperNameSpace" variant="h6" component="h2">
-                    {selectedRow &&  selectedRow.mapperNameSpace}
-                </Typography>
-                <SyntaxHighlighter language="sql" style={a11yDark}>
-                    {selectedRow && selectedRow.mapperBody}
-                </SyntaxHighlighter>
+
+                {/* Tab 컴포넌트 */}
+                <Tabs
+                    value={activeTab}
+                    onChange={handleTabChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
+                >
+                    <Tab label="XML 상세 보기"/>
+                    <Tab label="RUL 리스트 보기"/>
+                </Tabs>
+                {/* Tab 내용 */}
+                <TabPanel value={activeTab} index={0}>
+                    <Typography id="mapperType" variant="h6" component="h2">
+                        {selectedRow && selectedRow.mapperType}
+                    </Typography>
+                    <Typography id="mapperId" variant="h6" component="h2">
+                        {selectedRow && selectedRow.mapperId}
+                    </Typography>
+                    <Typography id="mapperNameSpace" variant="h6" component="h2">
+                        {selectedRow && selectedRow.mapperNameSpace}
+                    </Typography>
+                    <SyntaxHighlighter language="sql" style={a11yDark}>
+                        {selectedRow && selectedRow.mapperBody}
+                    </SyntaxHighlighter>
+                </TabPanel>
+
+                <TabPanel value={activeTab} index={1}>
+                    {selectedRow ? (
+                        <UrlListView servicesName={selectedRow.serviceName} mapperId={selectedRow.mapperId}
+                                     defaultPageSize={1000}></UrlListView>// 모달시 페이징 안됨...
+                    ) : (
+                        <Typography variant="h6" component="h2">
+                            선택된 항목이 없습니다.
+                        </Typography>
+                    )
+                    }
+                </TabPanel>
             </Box>
         </Modal>
     </Container>)
 };
+
+// TabPanel 컴포넌트를 정의하여 각 탭의 내용을 렌더링하는 함수
+function TabPanel({children, value, index}) {
+    return (
+        <div hidden={value !== index} style={{padding: '20px'}}>
+            {value === index && (
+                <Box>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
 
 export default XmlListView;

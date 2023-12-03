@@ -13,7 +13,6 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import Chip from '@mui/material/Chip';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import {a11yDark} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import * as PropTypes from "prop-types";
@@ -37,7 +36,7 @@ const XmlListView = () => {
     const [activeTab, setActiveTab] = useState(0); // 현재 활성 탭
 
     const END_POINT_URL = `api/mapperBody/${searchTerm}`;
-    // const END_POINT_URL = `http://localhost:8081/api/mapperBody/${searchTerm}`;
+    // const END_POINT_URL = `http://localhost:8080/api/mapperBody/${searchTerm}`;
     const handleOpenModal = (row) => {
         console.log(row);
         setSelectedRow(row);
@@ -160,7 +159,9 @@ const XmlListView = () => {
                     label="D"
                     control={<Checkbox id="delete" defaultChecked color="success" onChange={handleChange}/>}
                 />
-                <Chip label={pageInfo.totalElements}/>
+                <Typography id="mapperType" variant="h6" component="h2">
+                    Total : {pageInfo.totalElements}
+                </Typography>
             </Grid>
             <Grid item xs={12} md={4}>
                 <TextField

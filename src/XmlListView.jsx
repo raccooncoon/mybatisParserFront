@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Container from '@mui/material/Container';
-import {Box, Modal, Tab, Tabs, TextField, Typography} from "@mui/material";
+import {Box, Button, Modal, Tab, Tabs, TextField, Typography} from "@mui/material";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -159,9 +159,13 @@ const XmlListView = () => {
                     label="D"
                     control={<Checkbox id="delete" defaultChecked color="success" onChange={handleChange}/>}
                 />
-                <Typography id="mapperType" variant="h6" component="h2">
-                    Total : {pageInfo.totalElements}
-                </Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+                <div style={{textAlign: 'center', marginTop: '20px'}}>
+                    <Typography id="mapperType" variant="h6" component="h2">
+                        Total : {pageInfo.totalElements}
+                    </Typography>
+                </div>
             </Grid>
             <Grid item xs={12} md={4}>
                 <TextField
@@ -248,15 +252,18 @@ const XmlListView = () => {
                 </Tabs>
                 {/* Tab 내용 */}
                 <TabPanel value={activeTab} index={0}>
-                    <Typography id="mapperType" variant="h6" component="h2">
-                        {selectedRow && selectedRow.mapperType}
-                    </Typography>
-                    <Typography id="mapperId" variant="h6" component="h2">
-                        {selectedRow && selectedRow.mapperId}
-                    </Typography>
-                    <Typography id="mapperNameSpace" variant="h6" component="h2">
-                        {selectedRow && selectedRow.mapperNameSpace}
-                    </Typography>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: "space-between",
+                        textAlign: 'center',
+                        marginTop: '20px'
+                    }}>
+                        {selectedRow ? <Typography id="mapperType" variant="h6" component="h2">
+                            {selectedRow.mapperId}
+                        </Typography> : <Typography/>
+                        }
+                        <Button variant="outlined" onClick={() => setIsModalOpen(false)}> 닫기 </Button>
+                    </div>
                     <SyntaxHighlighter language="sql" style={a11yDark}>
                         {selectedRow && selectedRow.mapperBody}
                     </SyntaxHighlighter>
@@ -264,8 +271,9 @@ const XmlListView = () => {
 
                 <TabPanel value={activeTab} index={1}>
                     {selectedRow ? (
-                        <UrlListView servicesName={selectedRow.serviceName} mapperId={selectedRow.mapperId}
-                                     defaultPageSize={10}></UrlListView>// 모달시 페이징 안됨...
+                        <UrlListView servicesName={selectedRow.serviceName}
+                                     mapperId={selectedRow.mapperId}
+                                     defaultPageSize={10} setIsModalOpen={setIsModalOpen}/>// 모달시 페이징 안됨...
                     ) : (
                         <Typography variant="h6" component="h2">
                             선택된 항목이 없습니다.

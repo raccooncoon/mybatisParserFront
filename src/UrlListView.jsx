@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-const UrlListView = ({servicesName, mapperId, defaultPageSize}) => {
+const UrlListView = ({servicesName, mapperId, defaultPageSize, setIsModalOpen}) => {
     // const { servicesName, mapperId } = useParams(); // URL 파라미터 추출
     const [data, setData] = useState([]);
     const [pageInfo, setPageInfo] = useState({
@@ -86,9 +86,15 @@ const UrlListView = ({servicesName, mapperId, defaultPageSize}) => {
                 loader={<Typography></Typography>} // 로딩 중에 보여질 컴포넌트
             >
                 <TableContainer component={Paper}>
-                    <Typography id="mapperType" variant="h6" component="h2">
-                        Total : {pageInfo.totalElements}
-                    </Typography>
+                    <div style={{display: 'flex', justifyContent:"space-between", textAlign: 'center', marginTop: '20px'}}>
+                        <Typography id="mapperType" variant="h6" component="h2">
+                            Total : {pageInfo.totalElements}
+                        </Typography>
+                        <Typography id="mapperId" variant="h6" component="h2">
+                            {mapperId}
+                        </Typography>
+                        <Button variant="outlined" onClick={() =>setIsModalOpen(false)}> 닫기 </Button>
+                    </div>
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow>
@@ -118,12 +124,11 @@ const UrlListView = ({servicesName, mapperId, defaultPageSize}) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                {!pageInfo.last ? (
-                    <div style={{textAlign: 'center', marginTop: '20px'}}>
-                        <Button variant="outlined" onClick={fetchMoreData}>
-                            더보기
-                        </Button>
-                    </div>) : (<Typography></Typography>)}
+                <div style={{textAlign: 'center', marginTop: '20px'}}>
+                    {!pageInfo.last ? (
+                        <Button variant="outlined" onClick={fetchMoreData} fullWidth> 더보기 </Button>
+                    ) : (<Typography></Typography>)}
+                </div>
             </InfiniteScroll>
         )}
     </Container>)

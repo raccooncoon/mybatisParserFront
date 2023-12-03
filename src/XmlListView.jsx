@@ -264,7 +264,7 @@ const XmlListView = () => {
                 <TabPanel value={activeTab} index={1}>
                     {selectedRow ? (
                         <UrlListView servicesName={selectedRow.serviceName} mapperId={selectedRow.mapperId}
-                                     defaultPageSize={1000}></UrlListView>// 모달시 페이징 안됨...
+                                     defaultPageSize={20}></UrlListView>// 모달시 페이징 안됨...
                     ) : (
                         <Typography variant="h6" component="h2">
                             선택된 항목이 없습니다.
